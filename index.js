@@ -34,8 +34,64 @@ const db = mysql.createConnection(
       addDept: 'Add a department.',
       addRole: 'Add a role.',
       addEmply: 'Add an employee.',
-      updateEmply: 'Update an employee role.'
+      updateEmply: 'Update an employee role.',
+      quit: 'Quit.'
   };
 
+function callQuestions() {
+    inquirer.prompt({
+        name: 'action',
+        type: 'list',
+        message: 'What would you like to do?',
+        choices: [
+            questions.viewDept,
+            questions.viewRole,
+            questions.viewEmply,
+            questions.addDept,
+            questions.addRole,
+            questions.addEmply,
+            questions.updateEmply,
+            questions.quit
+        ]
+    }).then(answer => {
+        // using switch function to find the corresponding case selected, break to end the search //
+        switch (answer.action) {
+            case questions.viewDept:
+                viewDept();
+                break;
+            case questions.viewRole:
+                viewRole();
+                break;
+            case questions.viewEmply:
+                viewEmply();
+                break;
+            case questions.addDept:
+                addDept();
+                break;         
+            case questions.addRole:
+                addRole();
+                break;
+            case questions.addEmply:
+                addEmply();
+                break;
+            case questions.updateEmply:
+                updateEmply();
+                break;
+            }
+    })
+}
 
+// now to write the functions that I called above in the inquirer answer function //
+function viewDept() {}
 
+function viewRole() {}
+
+function viewEmply() {}
+
+function addDept() {}
+
+function addRole() {}
+
+function addEmply() {}
+
+function updateEmply() {}
