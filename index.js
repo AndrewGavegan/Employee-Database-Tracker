@@ -12,7 +12,7 @@ const inquirer = require('inquirer');
 const db = mysql.createConnection(
     {
       host: 'localhost',
-      port: 3344,
+      port: 3306,
       user: 'root',
       password: 'abc1997',
       database: 'employee_db'
@@ -174,9 +174,9 @@ async function addEmply() {
         }
         db.query('SELECT * FROM employee', async (err, res) => {
             if (err) throw err;
-            let names = res.map(res => `${res.firstName} ${res.lastName}`);
-            names.push('nothing');
-            let { manager } = await inquirer.prompt([
+            let names = res.map(res => `${res.first_name} ${res.last_name}`);
+            names.push('No manager');
+            let { emplyManager } = await inquirer.prompt([
                 {
                     name: 'emplyManager',
                     type: 'list',
@@ -186,12 +186,12 @@ async function addEmply() {
             ]);
             let managerId;
             let managerName;
-            if (emplyManager === 'nothing') {
+            if (emplyManager === 'No manager') {
                 managerId = null;
                 } else {
                     for (const row of res) {
-                        row.mngrName = `${data.firstName} ${data.lastName}`;
-                        if (row.mngrName === manager){
+                        row.mngrName = `${row.first_name} ${row.last_name}`;
+                        if (row.mngrName === emplyManager){
                             managerId = row.id;
                             managerName = row.mngrName
                             continue;
