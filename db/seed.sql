@@ -7,14 +7,14 @@ VALUES  ('Sales'),
         ('Legal');
 -- adding roles into the table -- 
 INSERT INTO roles (title, salary, department_id)
-VALUES  ('Salesperson', 50000, 1),
-        ('Sales Manager', 75000, 1),
-        ('Junior Engineer', 55000, 2),
+VALUES  ('Sales Manager', 75000, 1),
+        ('Salesperson', 50000, 1),
         ('Senior Engineer', 95000, 2),
-        ('Accounting Clerk', 50000, 3),
+        ('Junior Engineer', 55000, 2),
         ('Accounting Manager', 80000, 3),
-        ('Law Clerk', 55000, 4),
-        ('Barrister', 98000, 4);
+        ('Accounting Clerk ', 50000, 3),
+        ('Barrister',98000 , 4),
+        ('Law Clerk', 55000, 4);
 -- adding employees into the table --
 INSERT INTO employee (first_name, last_name, role_id, managers_id)
 VALUES  ('Mike', 'Chan', 1, NULL),

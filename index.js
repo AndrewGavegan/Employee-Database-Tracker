@@ -77,6 +77,9 @@ function callQuestions() {
             case questions.updateEmply:
                 updateEmply();
                 break;
+            case questions.quit:
+                db.end();
+                break;
             }
     })
 }
@@ -131,7 +134,8 @@ function viewRole() {
 
 function viewEmply() {
      // paste in code from query.sql file in template literals//
-     const employee = `SELECT  employee.id, employee.first_name, employee.last_name, roles.title, 
+     const employee = `
+     SELECT employee.id, employee.first_name, employee.last_name, roles.title, 
      department.department_name AS department, roles.salary, 
      CONCAT(manager.first_name, ' ', manager.last_name) AS manager    
      FROM employee
@@ -159,7 +163,7 @@ async function addEmply() {
         if (err) throw err;
         const {roles} = await inquirer.prompt([
             {
-                name: 'emplyRole',
+                name: 'roles',
                 type: 'list',
                 choices: () => res.map(res => res.title),
                 message: 'What role does this employee have?: '
@@ -199,11 +203,12 @@ async function addEmply() {
                     }
                 }
             console.log('New employee added!');
-            db.query('INSERT INTO employee SET ?', {
+            db.query('INSERT INTO employee SET ?', 
+            {
                 first_name: newEmply.firstname,
                 last_name: newEmply.lastname,
                 role_id: rolesId,
-                managers_id: parseInt(managerId)
+                managers_id: managerId
             },
             (err, res) => {
                 if (err) throw err;
