@@ -10,18 +10,20 @@
 * [Questions](Questions)
 ---
 ## Description
+This project is a command line interface based application which lets you create and maintain a database of a mock company complete with departments, roles, salaries, managers and employees. 
 
 ---
 ## Installation
-
+The node packages used in this application are inquirer, mysql2, and console.table. To install these relevant packages, run "npm install -y" in the command line after adding the packages under "dependencies" in the package.json file. Beneath the dependencies, set up the script using the "script" tag. And add the "start" script as an object, with "node index.js" as the arguement. This allows you to run "npm start" in the command line to begin the application.
 
 ---
 ## Usage 
+The application can be called by entering "npm start" in the command line. You will then be prompted with a list of options to proceed. Selecting one of these options continues as is shown in the following video. 
 
 
 ---
 ## Credits 
-
+This was a solo project built from scratch with the guidance and templtes provided and learnt in Unit 12 of the full stack bootcamp at the University of Sydney.
 
 ---
 ## License
