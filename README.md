@@ -19,7 +19,7 @@ The node packages used in this application are inquirer, mysql2, and console.tab
 ---
 ## Usage 
 The application can be called by entering "npm start" in the command line. You will then be prompted with a list of options to proceed. Selecting one of these options continues as is shown in the following video. 
-
+https://user-images.githubusercontent.com/91113260/168734064-94933a56-7fc8-4ac7-8550-20ed21c3f546.mp4
 
 ---
 ## Credits 
@@ -40,3 +40,6 @@ MIT
 ## Questions
 
 Please also direct questions to: AndrewGavegan, https://github.com/AndrewGavegan and zzandrewzz@optusnet.com.au
+
+
+
