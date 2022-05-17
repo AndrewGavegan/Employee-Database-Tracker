@@ -83,7 +83,7 @@ function callQuestions() {
             }
     })
 }
-// function for adding name of new depatment //
+// inquirer function for adding name of new depatment //
 function deptName() {
     return ([
         {
@@ -93,7 +93,22 @@ function deptName() {
         }
     ]);
 }
-// function for adding name of new employees //
+// inquirer function for adding the title and salary for new role //
+function roleName() {
+    return ([
+        {
+            name: "roleTitle",
+            type: "input",
+            message: "What is the title of the new role?" 
+        },
+        {
+            name: "roleSalary",
+            type: "input",
+            message: "What is the salary of this role?"
+        }
+    ]);
+}
+// inquirer function for adding name of new employees //
 function emplyName() {
     return ([
         {
@@ -108,7 +123,16 @@ function emplyName() {
         }
     ]);
 }
-
+// inquirer function for changing the role of an employee after requesting their id //
+function emplyId() {
+    return ([
+        {
+                name: "id",
+                type: "input",
+                message: "What is the employees id number?"
+        }
+    ]);
+}
 // now to write the functions that I called above in the inquirer answer function //
 function viewDept() {
     // paste in code from query.sql file in template literals//
@@ -164,22 +188,63 @@ function viewEmply() {
 }
 
 async function addDept() {
+    // wait for the answer to the deptName function to be received //
     const newDept = await inquirer.prompt(deptName());
     console.log('New department added!');
+    // once is has been, call the query function to run mysql insert statement and insert new department into the table //
     db.query('INSERT INTO department SET ?',
         {
             department_name: newDept.departmentName
         },
         (err, res) => {
             if (err) throw err;
+            // call inquirer to start again //
             callQuestions();
          });
     };
 
-function addRole() {}
+async function addRole() {
+    // waiting for the answer to the roleName function so we can proceed //
+    const newRole = await inquirer.prompt(roleName());
+    // selecting the department table so we can add existing departments as choices into the following prompt question //
+    db.query('SELECT department.id, department.department_name FROM department ORDER BY department.id', async (err, res) => {
+        if (err) throw err;
+        const { departments } = await inquirer.prompt([
+            {
+                name: 'departments',
+                type: 'list',
+                choices: () => res.map(res => res.department_name),
+                message: 'What department is this role in?: '
+            }
+        ]);
+        let departmentId;
+        for ( const row of res) {
+            // if the answer to the choices is equal to the actual id of an existing department in the table, then the new role is assigned to that table //
+            if (row.department_name === departments) {
+                departmentId = row.id;
+                continue;
+            }
+        }
+            console.log("New role added!");
+            // using mysql INSERT statement to add the newly created role into the roles table using values acquired from awaiting the roleName answers  //
+            db.query('INSERT INTO roles SET ?',
+            {
+                title: newRole.roleTitle,
+                salary: newRole.roleSalary,
+                department_id: departmentId
+            },
+            (err, res) => {
+                if (err) throw err;
+                // call inquirer to start again //
+                callQuestions();
+            });
+        });  
+    }
 
 async function addEmply() {
+        // waiting for the answer to the emplyName function so we can proceed //
     const newEmply = await inquirer.prompt(emplyName());
+        // selecting the roles table so we can add existing roles as choices for the following prompt question //
     db.query('SELECT roles.id, roles.title FROM roles ORDER BY roles.id;', async (err, res) => {
         if (err) throw err;
         const {roles} = await inquirer.prompt([
@@ -192,6 +257,7 @@ async function addEmply() {
         ]);
         let rolesId;
         for (const row of res) {
+            // if the selected choice matches the role id of an existing role, the new employee is given that role //
             if (row.title === roles) {
                 rolesId = row.id;
                 continue;
@@ -233,6 +299,7 @@ async function addEmply() {
             },
             (err, res) => {
                 if (err) throw err;
+                // call inquirer to start again //
                 callQuestions();
                 }
             )
@@ -240,4 +307,58 @@ async function addEmply() {
     });
 }
 
-function updateEmply() {}
+async function updateEmply() {
+    const employee_id = await inquirer.prompt(emplyId());
+    db.query('SELECT roles.id, roles.title FROM roles ORDER BY roles.id;', async (err, res) => {
+        if (err) throw err;
+        const {roles} = await inquirer.prompt([
+            {
+                name: 'roles',
+                type: 'list',
+                choices: () => res.map(res => res.title),
+                message: 'What is this employees new role?: '
+            }
+        ]);
+        let rolesId;
+        for (const row of res) {
+            if (row.title === roles) {
+                rolesId = row.id;
+                continue;
+            }
+        }
+        // if role changes then manager may change, use previously written query from add employee but tweak to fit //
+        db.query('SELECT * FROM employee', async (err, res) => {
+            if (err) throw err;
+            let names = res.map(res => `${res.first_name} ${res.last_name}`);
+            names.push('They are a manager');
+            let { emplyManager } = await inquirer.prompt([
+                {
+                    name: 'emplyManager',
+                    type: 'list',
+                    choices: names,
+                    message: 'Who will this employees manager be? '
+                }
+            ]);
+            let managerId;
+            let managerName;
+            if (emplyManager === 'They are a manager') {
+                managerId = null;
+                } else {
+                    for (const row of res) {
+                        row.mngrName = `${row.first_name} ${row.last_name}`;
+                        if (row.mngrName === emplyManager){
+                            managerId = row.id;
+                            managerName = row.mngrName
+                            continue;
+                        }
+                    }
+                }
+            db.query(`UPDATE employee SET role_id = ${rolesId}, managers_id = ${managerId} WHERE employee.id = ${employee_id.id}`, async (err, res) => {
+                if (err) throw err;
+                console.log('The employees role has been updated.');
+                // call inquirer to start again //
+                callQuestions();
+            }); // update query ends
+        });// manager name query ends
+    });// role change query ends 
+};// whole function ends
