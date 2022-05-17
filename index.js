@@ -83,7 +83,17 @@ function callQuestions() {
             }
     })
 }
-// function for adding new employees //
+// function for adding name of new depatment //
+function deptName() {
+    return ([
+        {
+            name: 'departmentName',
+            type: 'input',
+            message: 'What is the name of the new department?'
+        }
+    ]);
+}
+// function for adding name of new employees //
 function emplyName() {
     return ([
         {
@@ -153,7 +163,18 @@ function viewEmply() {
      });
 }
 
-function addDept() {}
+async function addDept() {
+    const newDept = await inquirer.prompt(deptName());
+    console.log('New department added!');
+    db.query('INSERT INTO department SET ?',
+        {
+            department_name: newDept.departmentName
+        },
+        (err, res) => {
+            if (err) throw err;
+            callQuestions();
+         });
+    };
 
 function addRole() {}
 
